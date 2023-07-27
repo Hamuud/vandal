@@ -18,6 +18,17 @@
 6. Open your browser and visit http://localhost:5000.
 7. After this go to Frontend repo and check README.md
 
+# query
+## Registration query example: 
+
+
+<img width="1048" alt="Screenshot 2023-07-27 at 15 50 56" src="https://github.com/Hamuud/vandal/assets/113451960/1e76e7a2-805b-47b3-9543-af2319037d0b">
+
+## Login query example:
+
+
+<img width="1048" alt="Screenshot 2023-07-27 at 15 51 48" src="https://github.com/Hamuud/vandal/assets/113451960/e02adebe-e8cb-4dbb-b087-7c25de56a142">
+
 ### Technologies
 
 Node.js
