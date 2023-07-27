@@ -21,9 +21,9 @@ export function send({ email, subject, html }) {
 }
 
 export function sendActivationLink(email, token) {
-  const link = `${process.env.CLIENT_URL}/vandal_front/#/activate/${token}`;
-  // Якщо ви робите це локально зітріть нижній коментарій та занесіть верхній у коментарі
-  // const link = `${process.env.CLIENT_URL}/activate/${token}`;
+  // const link = `${process.env.CLIENT_URL}/vandal_front/#/activate/${token}`;
+  // Якщо ви робите це локально зітріть нижній коментарій та занесіть верхній у коментар
+  const link = `${process.env.CLIENT_URL}/activate/${token}`;
   
   return send({
     email,
