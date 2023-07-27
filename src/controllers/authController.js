@@ -1,55 +1,76 @@
 import bcrypt from 'bcrypt';
-import { User } from "../models/User.js";
-import { userService } from '../services/userService.js';
+
+import { ApiError } from '../exceptions/ApiError.js';
+import { User } from '../models/User.js';
 import { jwtService } from '../services/jwtService.js';
-import { ApiError } from "../exceptions/ApiError.js";
 import { tokenService } from '../services/tokenService.js';
+import { userService } from '../services/userService.js';
 
 function validateEmail(value) {
   if (!value) {
-    return 'Email is required!';
+    return 'Email is required';
   }
 
   const emailPattern = /^[\w.+-]+@([\w-]+\.){1,3}[\w-]{2,}$/;
 
   if (!emailPattern.test(value)) {
-    return 'Email is not valid!';
+    return 'Email is not valid';
   }
-};
+}
 
-const validatePassword = (value) => {
+function validatePassword(value) {
   if (!value) {
-    return 'Password is required!';
+    return 'Password is required';
   }
 
   if (value.length < 6) {
-    return 'At least 6 characters!';
+    return 'At least 6 characters';
   }
-};
+}
 
-const validateName = (value) => {
+function validateName(value) {
   if (!value) {
-    return 'Name is requred!';
+    return 'Name is requred';
+  }
+}
+
+function validateSurname(value) {
+  if (!value) {
+    return 'Surname is requred';
+  }
+}
+
+function validatePhone(value) {
+  if (!value) {
+    return 'Phone is requred';
+  }
+
+  const phonePattern = /^\+?[0-9]+$/;
+
+  if (!phonePattern.test(value)) {
+    return 'Phone is not valid';
   }
 }
 
 async function register(req, res, next) {
-  const { email, password, name } = req.body;
+  const { email, password, name, surname, phone } = req.body;
 
   const errors = {
     email: validateEmail(email),
     password: validatePassword(password),
     name: validateName(name),
+    surname: validateSurname(surname),
+    phone: validatePhone(phone),
+  };
+
+  if (errors.email || errors.password || errors.name || errors.phone || errors.surname) {
+    throw ApiError.BadRequest('Validation error', errors)
   }
 
-  if (errors.email || errors.password || errors.name) {
-    throw ApiError.BadRequest('Validation error', errors);
-  }
+  await userService.register({ email, password, name, surname, phone });
 
-  await userService.register({ email, password, name })
-
-  res.send({ message: 'OK'});
-};
+  res.send({ message: 'OK' });
+}
 
 async function activate(req, res, next) {
   const { activationToken } = req.params;
@@ -71,11 +92,10 @@ async function activate(req, res, next) {
 
 async function login(req, res, next) {
   const { email, password } = req.body;
-
   const user = await userService.getByEmail(email);
 
   if (!user) {
-    throw ApiError.BadRequest('User with this email does not exist!');
+    throw ApiError.BadRequest('User with this email does not exist');
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -89,7 +109,6 @@ async function login(req, res, next) {
 
 async function refresh(req, res, next) {
   const { refreshToken } = req.cookies;
-
   const userData = jwtService.validateRefreshToken(refreshToken);
 
   if (!userData) {
@@ -125,7 +144,7 @@ async function sendAuthentication(res, user) {
   const accessToken = jwtService.generateAccessToken(userData);
   const refreshToken = jwtService.generateRefreshToken(userData);
 
-  await tokenService.save(user.id, refreshToken)
+  await tokenService.save(user.id, refreshToken);
 
   res.cookie('refreshToken', refreshToken, {
     maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -137,13 +156,13 @@ async function sendAuthentication(res, user) {
   res.send({
     user: userData,
     accessToken,
-  })
+  });
 }
 
-export const authController = { 
+export const authController = {
   register,
   activate,
   login,
-  refresh,
   logout,
+  refresh,
 };

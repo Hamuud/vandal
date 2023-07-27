@@ -15,6 +15,6 @@ export class ApiError extends Error {
   }
 
   static NotFound() {
-    return new ApiError(404, 'Not Found');
+    return new ApiError(404, 'Not found');
   }
 }

@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.JWT_ACCESS_SECRET, { expiresIn: '30s'});
+  return jwt.sign(user, process.env.JWT_ACCESS_SECRET, { expiresIn: '5s' });
 }
 
 function generateRefreshToken(user) {
-  return jwt.sign(user, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d'});
+  return jwt.sign(user, process.env.JWT_REFRESH_SECRET, { expiresIn: '30s' });
 }
 
 function validateAccessToken(token) {
@@ -24,7 +24,7 @@ function validateRefreshToken(token) {
   }
 }
 
-export const jwtService = {
+export const jwtService = { 
   generateAccessToken,
   generateRefreshToken,
   validateAccessToken,
